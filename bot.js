@@ -5,40 +5,35 @@ client.on('ready', () => {
     console.log('I am ready!');
 });
 
-const devs = ["466425075487342615"];
-const adminprefix = ["h"];
-client.on('message', message => {
-    var argresult = message.content.split(` `).slice(1).join(' ');
-      if (!devs.includes(message.author.id)) return;
+let bane = JSON.parse(fs.readFileSync("./bcer.json", "utf8"));
+let banse = new Set();
+client.on('guildBanAdd', function(guild) {
+  guild.fetchAuditLogs().then(logs => {
+    const ser = logs.entries.first().executor;
+    if(!bane[ser.id+guild.id]) bane[ser.id+guild.id] = {
+      bans: 2
+    }
+    let boner = bane[ser.id+guild.id]
+banse.add(ser.id)
+boner.bans = Math.floor(boner.bans+1)
 
-  if (message.content.startsWith(adminprefix + 'pl')) {
-    client.user.setGame(argresult);
-      message.channel.send(`**✅ تم تغيير الحالة بنجاح ${argresult}**`)
-  } else
-     if (message.content === (adminprefix + "lev")) {
-    message.guild.leave();
-  } else
-  if (message.content.startsWith(adminprefix + 'w')) {
-  client.user.setActivity(argresult, {type:'WATCHING'});
-      message.channel.send(`**✅ تم تغيير الحالة بنجاح ${argresult}**`)
-  } else
-  if (message.content.startsWith(adminprefix + 'l')) {
-  client.user.setActivity(argresult , {type:'LISTENING'});
-      message.channel.send(`**✅ تم تغيير الحالة بنجاح ${argresult}**`)
-  } else
-  if (message.content.startsWith(adminprefix + 'st')) {
-    client.user.setGame(argresult, "https://www.twitch.tv/idk");
-      message.channel.send(`**✅ تم تغيير الحالة بنجاح **`)
-  }
-  if (message.content.startsWith(adminprefix + 'name')) {
-  client.user.setUsername(argresult).then
-      message.channel.send(`**✅ تم تغير الاسم بنجاح ${argresult}** `)
-} else
-if (message.content.startsWith(adminprefix + 'avatar')) {
-  client.user.setAvatar(argresult);
-    message.channel.send(`**✅ تم تغير الصور بنجاح ${argresult}** `);
+
+setTimeout(() => {
+  boner.bans = 2
+  banse.delete(ser.id)
+},8000)
+
+if(boner.bans > 2) {
+  let roles = guild.members.get(ser.id).roles.array()
+guild.members.get(ser.id).removeRoles(roles)
 }
-});//hamo
+
+    })
+    fs.writeFile('./bcer.json', JSON.stringify(bane), (err) => {
+if (err) console.error(err);
+})
+
+})
 
 // THIS  MUST  BE  THIS  WAY
 client.login(process.env.BOT_TOKEN);
